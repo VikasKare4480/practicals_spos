@@ -1,0 +1,103 @@
+from picamera import PiCamera
+from time import sleep
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.image import MIMEImage
+
+camera = PiCamera()
+#The mail addresses and password
+sender_address = # ENTER RASPBERRYPI EMAIL ADDRESS
+sender_pass = # ENTER THE PASSWORD
+receiver_address = # ENTER YOUR EMAIL ADDRESS
+
+#Setup the MIME
+message = MIMEMultipart()
+message['From'] = sender_address
+message['To'] = receiver_address
+message['Subject'] = 'A picture taken by Pi camera module. It has an attachment.'   #The subject line
+
+while True:
+    # Take image
+    pic = '/home/pi/Desktop/img.jpg'
+    camera.start_preview()
+    sleep(5)
+    camera.capture(pic)
+    camera.stop_preview()
+    print('Image Captured')
+
+    # Attach the file
+    File = open(pic, 'rb')
+    img = MIMEImage(File.read())
+    File.close()
+    message.attach(img)
+
+    # Send Mail
+    #Create SMTP session for sending the mail
+    session = smtplib.SMTP('smtp.gmail.com', 587) #use gmail with port
+    session.starttls() #enable security
+    session.login(sender_address, sender_pass) #login with mail_id and password
+    text = message.as_string()
+    session.sendmail(sender_address, receiver_address, text)
+    session.quit()
+    print('Mail Sent')
+    
+    
+    
+    ============================================================================================================
+    
+    
+Step 1: Installing the Camera module
+
+On the Raspberry Pi, locate the Camera module port between the audio port and the HDMI port.
+If you’re using Raspberry Pi B, it is between the Ethernet port and the HDMI port.
+Insert the Camera module ribbon cable by gently pulling up the edges of the camera module port’s plastic chip.
+When inserting the cable, make sure the blue side is faced to the Ethernet port, and the silver side is facing the HDMI port.
+
+image from electronicwings.com
+Then, push down the plastic chip into place.
+Power on the Raspberry Pi.
+
+=================
+Step 2: Connecting the Camera module.
+
+SSH to the Raspberry PI using its IP address and port 22
+Enter the Username and password
+Upgrade and Update the Pi. It’s a good practice to always update and upgrade the pi each time we use it. Enter sudo apt-get updateand sudo apt-get upgrade.
+On the terminal, run sudo raspi-config.
+Click on the Interface option.
+
+image depicting raspberry pi software configuration
+Click on camera, then enable the camera interface.
+
+image depicting Picamera configuration
+
+Picamera configuring
+Reboot the Raspberry Pi
+Let’s take a still picture to be sure it working properly.
+
+On the command-line (SSH), run raspistill -o Desktop/pic.jpg
+
+
+The command raspistill is for taking still pictures. Since we are running the code from the terminal,
+we can’t view the image captured. But we can use some software like VNC to view Raspberry’s desktop or send the file via command-line to your PC.
+
+Here, we’ll use VNC to view the picture taken.
+
+Output:
+
+
+using VNC to display raspberry’s desktop
+
+image captured using Picamera module
+First, install the Picamera library on the Raspbian OS. Else, we’ll get an Import error: ‘no module named PiCamera’.
+
+     sudo apt-get install python-picamera python3-picamera
+Now, let’s write a python code that captures an image and sends a mail attaching the picture.
+
+===========================================
+
+Step 3: Python code
+
+Create a python file send_image.py
+Run     sudo nano send_image.py
+Enter the following codes
