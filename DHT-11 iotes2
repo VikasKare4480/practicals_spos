@@ -1,3 +1,28 @@
+#To start with update your package lists and install a few Python libraries :
+
+sudo apt-get update
+sudo apt-get install build-essential python-dev
+
+#Then clone the Adafruit library from their repository :
+
+git clone https://github.com/adafruit/Adafruit_Python_DHT.git
+cd Adafruit_Python_DHT
+
+#Then install the library for Python 2 and Python 3 :
+
+sudo python setup.py install
+sudo python3 setup.py install
+
+#Adafruit provide an example script that you can use to check your sensor is operating correctly.
+
+cd ~
+cd Adafruit_Python_DHT
+cd examples
+
+#Then :
+
+python AdafruitDHT.py 11 17
+
 import Adafruit_DHT
  
 # Set sensor type : Options are DHT11,DHT22 or AM2302
